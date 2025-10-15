@@ -1,0 +1,164 @@
+Zibtek AI Chatbot - Complete Project Structure
+===============================================
+
+Zibtek/
+│
+├── 📚 Documentation (Root Level)
+│   ├── README.md                      ⭐ Main project documentation
+│   ├── GET_STARTED.md                 ⚡ Quick start guide (5 minutes)
+│   ├── SETUP.md                       🔧 Detailed setup instructions
+│   ├── TESTING.md                     🧪 Comprehensive testing guide
+│   ├── QUICK_REFERENCE.md             📖 Command reference
+│   ├── PROJECT_OVERVIEW.md            📊 Architecture & technical details
+│   ├── DEPLOYMENT_CHECKLIST.md        ✅ Production deployment guide
+│   ├── IMPLEMENTATION_SUMMARY.md      📝 What was built
+│   └── PROJECT_STRUCTURE.txt          📁 This file
+│
+├── 🐳 Docker Configuration
+│   ├── docker-compose.yml             🎯 Multi-container orchestration
+│   └── .env                           🔑 Environment variables (create this!)
+│
+├── 🔒 Git Configuration
+│   └── .gitignore                     📄 Git ignore rules
+│
+├── 🐍 Backend (FastAPI + LangChain + Qdrant)
+│   └── backend/
+│       ├── 📦 Dependencies
+│       │   └── requirements.txt       📋 Python packages
+│       │
+│       ├── 🐳 Docker
+│       │   ├── Dockerfile            🏗️ Backend container
+│       │   ├── .dockerignore         🚫 Docker ignore
+│       │   ├── .gitignore            🚫 Git ignore
+│       │   └── start.sh              ▶️ Startup script
+│       │
+│       ├── ⚙️ Configuration
+│       │   └── env.template          📝 Environment template
+│       │
+│       ├── 💾 Data (Created at runtime)
+│       │   └── data/
+│       │       └── chatbot.db        🗄️ SQLite database
+│       │
+│       └── 📂 Application Code
+│           └── app/
+│               ├── __init__.py
+│               │
+│               ├── 🎯 Main Entry
+│               │   ├── main.py                  ⚡ FastAPI application
+│               │   └── ingest_data.py          📥 Data ingestion script
+│               │
+│               ├── 🔧 Core Modules
+│               │   └── core/
+│               │       ├── __init__.py
+│               │       ├── config.py           ⚙️ Settings & configuration
+│               │       ├── database.py         💾 SQLite models & connection
+│               │       └── security.py         🔒 Prompt injection protection
+│               │
+│               ├── 🌐 API Endpoints
+│               │   └── api/
+│               │       ├── __init__.py
+│               │       └── routes/
+│               │           ├── __init__.py
+│               │           ├── chat.py         💬 Chat endpoints
+│               │           └── conversations.py 📝 Conversation management
+│               │
+│               ├── ⚙️ Services (Business Logic)
+│               │   └── services/
+│               │       ├── __init__.py
+│               │       ├── scraper.py          🕷️ Web scraping
+│               │       ├── embeddings.py       🔢 Embedding generation
+│               │       ├── qdrant_service.py   🗄️ Vector database ops
+│               │       └── langchain_rag.py    🤖 RAG pipeline
+│               │
+│               ├── 📋 Data Models
+│               │   └── models/
+│               │       ├── __init__.py
+│               │       └── schemas.py          📊 Pydantic models
+│               │
+│               └── 🔧 Utilities
+│                   └── utils/
+│                       ├── __init__.py
+│                       └── logger.py           📝 Query logging
+│
+└── ⚛️ Frontend (Next.js + TypeScript + Tailwind)
+    └── frontend/
+        ├── 📦 Dependencies
+        │   ├── package.json              📋 Node packages
+        │   └── package-lock.json         🔒 Locked versions
+        │
+        ├── 🐳 Docker
+        │   ├── Dockerfile               🏗️ Frontend container
+        │   ├── .dockerignore            🚫 Docker ignore
+        │   └── .gitignore               🚫 Git ignore
+        │
+        ├── ⚙️ Configuration
+        │   ├── next.config.js           ⚙️ Next.js config
+        │   ├── tsconfig.json            📘 TypeScript config
+        │   ├── tailwind.config.js       🎨 Tailwind config
+        │   └── postcss.config.js        🎨 PostCSS config
+        │
+        └── 📂 Source Code
+            └── src/
+                ├── 📄 App Router (Next.js 14)
+                │   └── app/
+                │       ├── layout.tsx          🎯 Root layout
+                │       ├── page.tsx            🏠 Home page
+                │       └── globals.css         🎨 Global styles
+                │
+                ├── 🧩 React Components
+                │   └── components/
+                │       ├── ChatInterface.tsx   🎯 Main container
+                │       ├── Sidebar.tsx         📋 Conversation list
+                │       ├── MessageList.tsx     💬 Message display
+                │       ├── ChatInput.tsx       ⌨️ Input box
+                │       └── Message.tsx         💬 Individual message
+                │
+                ├── 🔧 Library Code
+                │   └── lib/
+                │       ├── api.ts             🌐 API client functions
+                │       └── store.ts           🗄️ Zustand state store
+                │
+                └── 📘 TypeScript Types
+                    └── types/
+                        └── chat.ts            📋 Type definitions
+
+═══════════════════════════════════════════════════════════
+
+📊 Statistics:
+  - Total Directories: 15
+  - Total Files: 50+
+  - Backend Files: 18
+  - Frontend Files: 15
+  - Documentation: 9
+  - Configuration: 8+
+
+🔑 Key Technologies:
+  Backend:  FastAPI, LangChain, Qdrant, OpenAI, SQLite
+  Frontend: Next.js 14, TypeScript, Tailwind CSS, Zustand
+  DevOps:   Docker, Docker Compose
+
+🎯 Main Entry Points:
+  - Frontend:  http://localhost:3000
+  - Backend:   http://localhost:8000
+  - API Docs:  http://localhost:8000/docs
+  - Qdrant:    http://localhost:6333/dashboard
+
+📚 Documentation Hierarchy:
+  1. GET_STARTED.md           → Quick start (5 min)
+  2. SETUP.md                 → Detailed setup
+  3. README.md                → Full documentation
+  4. TESTING.md               → Testing guide
+  5. QUICK_REFERENCE.md       → Command reference
+  6. PROJECT_OVERVIEW.md      → Architecture
+  7. DEPLOYMENT_CHECKLIST.md  → Production guide
+  8. IMPLEMENTATION_SUMMARY.md → Feature list
+
+═══════════════════════════════════════════════════════════
+
+Legend:
+  ⭐ Essential    🔧 Configuration    🐳 Docker       📦 Dependencies
+  ⚡ Entry Point  🔒 Security        🤖 AI/ML        💬 Chat
+  🌐 API          💾 Database        🎨 Styling      📘 Types
+  🧪 Testing      ✅ Checklist       📊 Data         🔢 Embeddings
+
+
