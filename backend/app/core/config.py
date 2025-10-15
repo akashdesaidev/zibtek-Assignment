@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     # OpenAI
     OPENAI_API_KEY: str
     OPENAI_MODEL: str = "gpt-3.5-turbo"
-    OPENAI_EMBEDDING_MODEL: str = "text-embedding-3-small"
+    OPENAI_EMBEDDING_MODEL: str = "text-embedding-ada-002"
     
     # Qdrant
     QDRANT_HOST: str = "localhost"
@@ -32,8 +32,15 @@ class Settings(BaseSettings):
     # RAG Settings
     CHUNK_SIZE: int = 1000
     CHUNK_OVERLAP: int = 200
-    TOP_K_RESULTS: int = 5
+    TOP_K_RESULTS: int = 100
     SIMILARITY_THRESHOLD: float = 0.7
+    
+    # Reranker Settings (BGE-Reranker from HuggingFace)
+    USE_RERANKER: bool = True
+    RERANK_MODEL: str = "BAAI/bge-reranker-large"  # BGE reranker model
+    RERANK_TOP_N: int = 5  # Number of results to keep after reranking
+    RERANK_THRESHOLD: float = 0.5  # Minimum relevance score (0-1)
+    RERANK_BATCH_SIZE: int = 16  # Batch size for reranking
     
     # LangSmith Tracing (Optional)
     LANGSMITH_TRACING: Optional[str] = None

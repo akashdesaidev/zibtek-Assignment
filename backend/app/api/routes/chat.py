@@ -14,6 +14,31 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
+@router.get("/debug/rag-test")
+async def test_rag_pipeline():
+    """
+    Debug endpoint to test RAG pipeline functionality
+    """
+    try:
+        test_query = "What services does Zibtek offer?"
+        logger.info(f"Testing RAG pipeline with query: {test_query}")
+        
+        # Test context retrieval
+        context, sources = rag_service.retrieve_context(test_query)
+        
+        return {
+            "query": test_query,
+            "context_found": bool(context),
+            "context_length": len(context),
+            "sources_count": len(sources),
+            "sources": sources,
+            "context_preview": context[:500] + "..." if len(context) > 500 else context
+        }
+    except Exception as e:
+        logger.error(f"Error in RAG test: {e}")
+        raise HTTPException(status_code=500, detail=f"RAG test failed: {str(e)}")
+
+
 @router.post("/message", response_model=ChatResponse)
 async def send_message(
     request: MessageRequest,

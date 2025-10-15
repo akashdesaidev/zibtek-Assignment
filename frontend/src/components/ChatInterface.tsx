@@ -90,11 +90,12 @@ export default function ChatInterface() {
     try {
       const response = await sendMessage(currentConversationId, message);
 
-      // Add assistant response
+      // Add assistant response with sources
       addMessage({
         role: "assistant",
         content: response.message,
         timestamp: new Date().toISOString(),
+        sources: response.sources,
       });
 
       // Update conversation title if it's the first message

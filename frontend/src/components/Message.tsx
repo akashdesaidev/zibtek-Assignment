@@ -1,5 +1,5 @@
 import { Message as MessageType } from "@/types/chat";
-import { Bot, User } from "lucide-react";
+import { Bot, User, ExternalLink } from "lucide-react";
 
 interface MessageProps {
   message: MessageType;
@@ -28,6 +28,30 @@ export default function Message({ message }: MessageProps) {
         <div className="text-gray-800 whitespace-pre-wrap">
           {message.content}
         </div>
+        {!isUser && message.sources && message.sources.length > 0 && (
+          <div className="mt-3 pt-3 border-t border-gray-200">
+            <div className="text-xs font-semibold text-gray-600 mb-2">
+              Sources:
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {message.sources.map((source, index) => (
+                <a
+                  key={index}
+                  href={source}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 hover:underline bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded transition-colors"
+                >
+                  <ExternalLink className="w-3 h-3" />
+                  <span className="max-w-xs truncate">
+                    {new URL(source).hostname}
+                    {new URL(source).pathname}
+                  </span>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

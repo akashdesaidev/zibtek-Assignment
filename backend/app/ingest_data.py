@@ -2,6 +2,7 @@
 Data ingestion script to scrape website and populate Qdrant
 """
 import logging
+import sys
 from app.core.config import settings
 from app.services.scraper import scrape_website
 from app.services.embeddings import embedding_service
@@ -14,7 +15,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def ingest_data():
+def ingest_data(force_refresh: bool = False):
     """Main data ingestion function"""
     try:
         logger.info("Starting data ingestion...")
@@ -25,9 +26,10 @@ def ingest_data():
             logger.info("To re-ingest, delete the collection first.")
             return
         
-        # Step 1: Scrape website
+        # Step 1: Scrape website (with caching)
         logger.info(f"Scraping website: {settings.TARGET_WEBSITE}")
-        documents = scrape_website(settings.TARGET_WEBSITE, max_pages=50)
+        # Try to load from cache first, only crawl if no cache exists or force_refresh is True
+        documents = scrape_website(settings.TARGET_WEBSITE, max_pages=100, force_refresh=force_refresh)
         
         if not documents:
             logger.error("No documents scraped. Exiting.")
@@ -62,6 +64,12 @@ def ingest_data():
 
 
 if __name__ == "__main__":
-    ingest_data()
+    # Check for command line arguments
+    force_refresh = "--force-refresh" in sys.argv or "-f" in sys.argv
+    
+    if force_refresh:
+        logger.info("Force refresh mode enabled - will crawl fresh content")
+    
+    ingest_data(force_refresh=force_refresh)
 
 
