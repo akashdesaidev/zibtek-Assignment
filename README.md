@@ -36,7 +36,7 @@ An AI-powered chatbot that answers queries exclusively based on Zibtek's website
 
 ```
 User Query → FastAPI → Prompt Injection Check → LangChain RAG Pipeline
-→ Qdrant Vector Search → Context Retrieval → OpenAI LLM → Response
+→ Qdrant Vector Search → Context Retrieval→ Reranker → OpenAI LLM → Response
 → SQLite Logging
 ```
 

@@ -28,11 +28,21 @@ IMPORTANT RULES:
 Remember: ONLY answer questions about Zibtek based on the context provided with each question."""
     
     def __init__(self):
-        self.llm = ChatOpenAI(
-            model=settings.OPENAI_MODEL,
-            temperature=0.7,
-            openai_api_key=settings.OPENAI_API_KEY
-        )
+        # GPT-5 doesn't support temperature parameter, so we conditionally set it
+        llm_kwargs = {
+            "model": settings.OPENAI_MODEL,
+            "openai_api_key": settings.OPENAI_API_KEY
+        }
+        
+        # Only add temperature for non-GPT-5 models
+        if not settings.OPENAI_MODEL.startswith("gpt-5"):
+            llm_kwargs["temperature"] = 0.7
+        else:
+            # Add GPT-5 specific parameters
+            llm_kwargs["reasoning_effort"] = settings.GPT5_REASONING_EFFORT
+            llm_kwargs["verbosity"] = settings.GPT5_VERBOSITY
+            llm_kwargs["temperature"] = 1
+        self.llm = ChatOpenAI(**llm_kwargs)
         self.embeddings = OpenAIEmbeddings(
             model=settings.OPENAI_EMBEDDING_MODEL,
             openai_api_key=settings.OPENAI_API_KEY
@@ -69,6 +79,12 @@ Remember: ONLY answer questions about Zibtek based on the context provided with 
                 if r['score'] >= settings.SIMILARITY_THRESHOLD
             ]
             logger.info(f"Filtered to {len(filtered_results)} results above threshold {settings.SIMILARITY_THRESHOLD}")
+            
+            # Log score distribution for debugging
+            if results:
+                scores = [r['score'] for r in results]
+                logger.info(f"Score distribution - Min: {min(scores):.3f}, Max: {max(scores):.3f}, Avg: {sum(scores)/len(scores):.3f}")
+                logger.info(f"Results above {settings.SIMILARITY_THRESHOLD}: {len(filtered_results)}/{len(results)}")
             
             if not filtered_results:
                 logger.info("No results above similarity threshold")

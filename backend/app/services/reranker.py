@@ -110,15 +110,29 @@ class RerankerService:
             # Sort by rerank score (descending)
             scored_docs.sort(key=lambda x: x['rerank_score'], reverse=True)
             
-            # Filter by threshold and limit to top_n
+            # Log rerank score distribution
+            rerank_scores = [doc['rerank_score'] for doc in scored_docs]
+            logger.info(f"Rerank score distribution - Min: {min(rerank_scores):.3f}, Max: {max(rerank_scores):.3f}, Avg: {sum(rerank_scores)/len(rerank_scores):.3f}")
+            
+            # Filter by threshold first, then limit to top_n
             reranked_docs = []
-            for doc in scored_docs[:top_n]:
+            filtered_out_count = 0
+            
+            # First, filter by threshold
+            for i, doc in enumerate(scored_docs):
                 if doc['rerank_score'] >= threshold:
                     reranked_docs.append(doc)
+                    logger.debug(f"Doc {i+1}: rerank_score={doc['rerank_score']:.3f} ✅ (above threshold {threshold})")
                 else:
-                    logger.debug(
-                        f"Doc filtered out: rerank_score={doc['rerank_score']:.3f} < threshold={threshold}"
-                    )
+                    filtered_out_count += 1
+                    logger.info(f"Doc {i+1}: rerank_score={doc['rerank_score']:.3f} ❌ (below threshold {threshold})")
+            
+            # Then limit to top_n
+            if len(reranked_docs) > top_n:
+                logger.info(f"Limiting {len(reranked_docs)} threshold-passing docs to top {top_n}")
+                reranked_docs = reranked_docs[:top_n]
+            
+            logger.info(f"Reranking filter results: {len(reranked_docs)} final docs (from {len(scored_docs)} total, {filtered_out_count} filtered out by threshold)")
             
             logger.info(
                 f"Reranking complete: {len(documents)} → {len(reranked_docs)} documents "
