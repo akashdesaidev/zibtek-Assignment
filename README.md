@@ -20,7 +20,7 @@ An AI-powered chatbot that answers queries exclusively based on Zibtek's website
 - **FastAPI**: High-performance Python web framework
 - **LangChain**: RAG pipeline and conversation management
 - **Qdrant**: Vector database for semantic search
-- **OpenAI**: Embeddings (text-embedding-3-small) and LLM (GPT-3.5-turbo)
+- **OpenAI**: Embeddings (text-embedding-ada-002) and LLM (GPT-5)
 - **SQLite**: Conversation and query logging
 - **BeautifulSoup**: Web scraping
 
@@ -200,7 +200,23 @@ docker-compose exec backend python -m app.ingest_data
 
 ## Development
 
-### Run Backend Locally
+### Local Development Setup
+
+For local development, you need to run the services in the correct order:
+
+#### 1. Start Vector Database (Qdrant)
+
+First, start the Qdrant vector database:
+
+```bash
+# Start only Qdrant service
+docker-compose up qdrant -d
+
+# Verify Qdrant is running
+curl http://localhost:6333/health
+```
+
+#### 2. Set Up Backend Environment
 
 ```bash
 cd backend
@@ -209,10 +225,31 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 cp env.template .env
 # Edit .env with your OpenAI API key
+```
+
+#### 3. Run Data Ingestion Script
+
+**Important**: You must run the ingest script to populate the vector database before starting the backend:
+
+```bash
+# Make sure you're in the backend directory with venv activated
+python -m app.ingest_data
+```
+
+This will:
+
+- Scrape Zibtek's website content
+- Create embeddings using OpenAI
+- Store data in Qdrant vector database
+
+#### 4. Start Backend Server
+
+```bash
+# Start the FastAPI backend
 uvicorn app.main:app --reload
 ```
 
-### Run Frontend Locally
+#### 5. Run Frontend Locally
 
 ```bash
 cd frontend
@@ -222,15 +259,49 @@ echo "NEXT_PUBLIC_API_URL=http://localhost:8000" > .env.local
 npm run dev
 ```
 
+### Complete Local Development Workflow
+
+```bash
+# Terminal 1: Start Qdrant
+docker-compose up qdrant -d
+
+# Terminal 2: Backend setup and ingestion
+cd backend
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+cp env.template .env
+# Edit .env with your OpenAI API key
+python -m app.ingest_data  # Run this first!
+uvicorn app.main:app --reload
+
+# Terminal 3: Frontend
+cd frontend
+npm install
+echo "NEXT_PUBLIC_API_URL=http://localhost:8000" > .env.local
+npm run dev
+```
+
+### Access Local Development
+
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:8000
+- **API Documentation**: http://localhost:8000/docs
+- **Qdrant Dashboard**: http://localhost:6333/dashboard
+
 ## Configuration
 
 Edit `backend/app/core/config.py` to customize:
 
 - `CHUNK_SIZE`: Size of text chunks (default: 1000)
 - `CHUNK_OVERLAP`: Overlap between chunks (default: 200)
-- `TOP_K_RESULTS`: Number of similar documents to retrieve (default: 5)
-- `SIMILARITY_THRESHOLD`: Minimum similarity score (default: 0.7)
-- `OPENAI_MODEL`: OpenAI model to use (default: gpt-3.5-turbo)
+- `TOP_K_RESULTS`: Initial retrieval from vector DB (default: 20)
+- `SIMILARITY_THRESHOLD`: Minimum similarity score (default: 0.1)
+- `RERANK_TOP_N`: Final number of results after reranking (default: 10)
+- `RERANK_THRESHOLD`: Minimum rerank score (default: 0.3)
+- `OPENAI_MODEL`: OpenAI model to use (default: gpt-5)
+- `GPT5_REASONING_EFFORT`: GPT-5 reasoning depth (minimal, low, medium, high)
+- `GPT5_VERBOSITY`: GPT-5 output verbosity (low, medium, high)
 
 ## Logging
 
